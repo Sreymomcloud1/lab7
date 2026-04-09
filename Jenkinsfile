@@ -1,14 +1,12 @@
 pipeline {
     agent any
 
-    environment {
-        // 1. CHANGE THIS to your actual Docker Hub username
-        DOCKER_USER = "your-docker-username" 
-        IMAGE_NAME = "foodexpress-app"
-        
-        // This references the credentials you created in Jenkins settings
-        DOCKER_CREDS = credentials('docker-hub-creds')
-    }
+   environment {
+    // Put your new Docker ID here
+    DOCKER_USER = "143mom" 
+    IMAGE_NAME = "foodexpress-app"
+    DOCKER_CREDS = credentials('docker-hub-creds')
+}
 
     stages {
         stage('Build & Login Docker') {
