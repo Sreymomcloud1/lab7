@@ -39,7 +39,7 @@ resource "aws_instance" "app" {
               systemctl start docker
               systemctl enable docker
               # REPLACE 'your-docker-username' with your actual Docker Hub ID
-              docker run -d -p 80:3000 your-docker-username/foodexpress-app:latest
+              docker run -d -p 80:3000 143mom/foodexpress-app:latest
               EOF
 
   tags = {
