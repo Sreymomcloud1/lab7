@@ -26,7 +26,9 @@ resource "aws_security_group" "web" {
 resource "aws_instance" "app" {
   ami           = "ami-0c02fb55956c7d316" # Ubuntu us-east-1
   instance_type = "t2.micro"
-  key_name      = var.foodexpress-key
+  
+  # REPLACE 'your-key-name' with the actual name from your AWS Console
+  key_name      = "your-key-name" 
 
   vpc_security_group_ids = [aws_security_group.web.id]
 
@@ -36,7 +38,8 @@ resource "aws_instance" "app" {
               apt-get install -y docker.io
               systemctl start docker
               systemctl enable docker
-              docker run -d -p 80:3000 ${var.image_name}
+              # REPLACE 'your-docker-username' with your actual Docker Hub ID
+              docker run -d -p 80:3000 your-docker-username/foodexpress-app:latest
               EOF
 
   tags = {
