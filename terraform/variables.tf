@@ -1,4 +1,4 @@
-variable "key_1" {
+variable "foodexpress-key" {
   description = "The name of the AWS key pair"
   type        = string
 }
