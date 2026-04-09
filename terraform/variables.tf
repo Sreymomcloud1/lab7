@@ -1,5 +1,5 @@
-variable "key_name" {
-  description = "AWS EC2 key pair name"
+variable "key_1" {
+  description = "The name of the AWS key pair"
   type        = string
 }
 
