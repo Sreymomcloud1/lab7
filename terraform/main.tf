@@ -26,7 +26,7 @@ resource "aws_security_group" "web" {
 resource "aws_instance" "app" {
   ami           = "ami-0c02fb55956c7d316" # Ubuntu us-east-1
   instance_type = "t2.micro"
-  key_name      = var.key_1
+  key_name      = var.foodexpress-key
 
   vpc_security_group_ids = [aws_security_group.web.id]
 
