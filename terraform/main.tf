@@ -24,11 +24,11 @@ resource "aws_security_group" "web" {
 
 # EC2 Instance
 resource "aws_instance" "app" {
-  ami           = "ami-0c02fb55956c7d316" # Ubuntu us-east-1
+  ami           = "ami-0c02fb55956c7d316" # Ubuntu 20.04 in us-east-1
   instance_type = "t2.micro"
   
-  # REPLACE 'your-key-name' with the actual name from your AWS Console
-  key_name      = "your-key-name" 
+  # IMPORTANT: Change "your-key-name" to your actual AWS Key Pair name
+  key_name      = "foodexpress-key" 
 
   vpc_security_group_ids = [aws_security_group.web.id]
 
@@ -38,11 +38,16 @@ resource "aws_instance" "app" {
               apt-get install -y docker.io
               systemctl start docker
               systemctl enable docker
-              # REPLACE 'your-docker-username' with your actual Docker Hub ID
+              # Pulling the image you just pushed to Docker Hub
               docker run -d -p 80:3000 143mom/foodexpress-app:latest
               EOF
 
   tags = {
     Name = "FoodExpress-App"
   }
+}
+
+# Output the IP so you can find your website easily
+output "website_url" {
+  value = "http://${aws_instance.app.public_ip}"
 }
