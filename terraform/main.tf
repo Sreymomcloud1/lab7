@@ -38,8 +38,15 @@ resource "aws_instance" "app" {
               apt-get install -y docker.io
               systemctl start docker
               systemctl enable docker
-              # Pulling the image you just pushed to Docker Hub
-              docker run -d -p 80:3000 143mom/foodexpress-app:latest
+              
+              # Give Docker a few seconds to initialize
+              sleep 10
+              
+              # Pull the image explicitly first
+              docker pull 143mom/foodexpress-app:latest
+              
+              # Run the container
+              docker run -d --name food-app -p 80:3000 143mom/foodexpress-app:latest
               EOF
 
   tags = {
