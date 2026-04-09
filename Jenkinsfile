@@ -26,7 +26,7 @@ pipeline {
                     sh '''
                     terraform apply -auto-approve \
                     -var "image_name=$IMAGE_NAME" \
-                    -var "key_name=your-key-name"
+                    -var "key_1=your-key-name"
                     '''
                 }
             }
