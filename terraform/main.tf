@@ -28,7 +28,7 @@ resource "aws_instance" "app" {
   instance_type = "t2.micro"
   
   # IMPORTANT: Change "your-key-name" to your actual AWS Key Pair name
-  key_name      = "foodexpress-key" 
+  key_name      = "Key_1" 
 
   vpc_security_group_ids = [aws_security_group.web.id]
 
