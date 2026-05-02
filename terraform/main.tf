@@ -2,6 +2,12 @@ provider "aws" {
   region = "us-east-1"
 }
 
+# ✅ ADD THIS (fixes your error)
+variable "image_name" {
+  description = "Docker image"
+  type        = string
+}
+
 # Security Group
 resource "aws_security_group" "web" {
   name        = "foodexpress-sg"
@@ -24,11 +30,10 @@ resource "aws_security_group" "web" {
 
 # EC2 Instance
 resource "aws_instance" "app" {
-  ami           = "ami-0c02fb55956c7d316" # Ubuntu 20.04 in us-east-1
+  ami           = "ami-0c02fb55956c7d316"
   instance_type = "t2.micro"
   
-  # IMPORTANT: Change "your-key-name" to your actual AWS Key Pair name
-  key_name      = "Key_1" 
+  key_name      = "Key_1"
 
   vpc_security_group_ids = [aws_security_group.web.id]
 
@@ -38,8 +43,9 @@ resource "aws_instance" "app" {
               apt-get install -y docker.io
               systemctl start docker
               systemctl enable docker
-              sleep 20 # CRITICAL: Wait for Docker to finish starting
-              sudo docker run -d -p 80:3000 143mom/foodexpress-app:latest
+              sleep 20
+              # ✅ CHANGED THIS LINE ONLY
+              sudo docker run -d -p 80:3000 ${var.image_name}
               EOF
 
   tags = {
@@ -47,7 +53,7 @@ resource "aws_instance" "app" {
   }
 }
 
-# Output the IP so you can find your website easily
+# Output
 output "website_url" {
   value = "http://${aws_instance.app.public_ip}"
 }
