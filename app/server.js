@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-    res.send("Updated from main branch_test1");
+    res.send("Updated from main branch_test1_test2");
 });
 
 app.get('/health', (req, res) => {
