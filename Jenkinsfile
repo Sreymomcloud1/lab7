@@ -2,72 +2,74 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USER = "143mom"
-        IMAGE_NAME = "foodexpress-app"
-        AWS_REGION = "us-east-1"
-        DOCKER_CREDS = credentials('docker-hub-creds')
+        IMAGE = "yourdockerhubusername/devops-app:latest"
     }
 
     stages {
 
-        stage('Docker Login') {
+        stage('Clone Code') {
             steps {
-                sh '''
-                echo $DOCKER_CREDS_PSW | docker login -u $DOCKER_CREDS_USR --password-stdin
-                '''
+                git 'https://github.com/YOUR_USERNAME/YOUR_REPO.git'
             }
         }
 
-        stage('Build Image') {
+        stage('Install Dependencies') {
             steps {
-                sh "docker build -t ${DOCKER_USER}/${IMAGE_NAME}:latest ."
+                sh 'cd app && npm install'
             }
         }
 
-        stage('Push Image') {
+        stage('SonarQube Analysis') {
             steps {
-                sh "docker push ${DOCKER_USER}/${IMAGE_NAME}:latest"
+                sh 'sonar-scanner'
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('Trivy Scan') {
+            steps {
+                sh 'trivy fs .'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $IMAGE .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push $IMAGE'
             }
         }
 
         stage('Terraform Init') {
             steps {
-                dir('terraform') {
-                    sh 'terraform init'
-                }
+                sh 'cd terraform && terraform init'
             }
         }
 
         stage('Terraform Apply') {
-    steps {
-        dir('terraform') {
-            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
-
-                sh '''
-                export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                export AWS_DEFAULT_REGION=ap-southeast-1
-
-                terraform init
-                terraform apply -auto-approve -var="image_name=143mom/foodexpress-app:latest"
-                '''
+            steps {
+                sh 'cd terraform && terraform apply -auto-approve'
             }
         }
-    }
-}
-    }
 
-    post {
-        success {
-            echo "✅ Pipeline completed successfully!"
-        }
-
-        failure {
-            echo "❌ Pipeline failed — check logs"
-        }
-
-        always {
-            sh "docker logout || true"
+        stage('Deploy Container') {
+            steps {
+                sh '''
+                docker pull $IMAGE
+                docker run -d -p 80:3000 $IMAGE
+                '''
+            }
         }
     }
 }
