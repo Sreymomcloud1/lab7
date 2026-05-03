@@ -1,16 +1,17 @@
 const express = require('express');
 const app = express();
 
-const PORT = 3000;
-
 app.get('/', (req, res) => {
-  res.send('🍔 FoodExpress API is running on AWS!');
+    res.send("🚀 DevOps CI/CD Pipeline Running Successfully!");
 });
 
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK' });
+    res.json({
+        status: "UP",
+        service: "AUPP DevOps App"
+    });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(3000, () => {
+    console.log("Server running on port 3000");
 });
